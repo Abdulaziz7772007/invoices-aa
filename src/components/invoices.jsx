@@ -2,7 +2,7 @@ import InvoiceCard from './InvoiceCard'
 
 export default function Invoices({ invoices, loading, error }) {
 	if (loading) {
-		return<h1 className='container mx-auto text-6xl  text-slate-500'>Loading...</h1>
+		return<h1 className='container mx-auto text-6xl flex items-center justify-center  text-slate-500'>Loading...</h1>
 	}
 	if (error) {
 		return <h1>Xatolik yuz berdi</h1>
