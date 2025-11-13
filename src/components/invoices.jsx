@@ -1,36 +1,24 @@
-import { useEffect, useState } from 'react'
 import InvoiceCard from './InvoiceCard'
 
-export default function Invoices() {
-	const [invoices, setInvoices] = useState([])
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState(null)
-	const [filter, setFilter] = useState('')
-
-	useEffect(() => {
-		setLoading(true)
-		fetch('https://json-api.uz/api/project/invoices-app-fn43/invoices')
-		.then(res => {
-			return res.json()
-		})
-		.then(res => {
-			setInvoices(res.data)
-		})
-		.catch(() => {
-			setError("something went wrong :(")
-		})
-		.finally(() => {
-			setLoading(false)
-		})
-	}, [])
-
-	if(loading) {
-
+export default function Invoices({ invoices, loading, error }) {
+	if (loading) {
+		;<h1 className='container mx-auto text-6xl text-slate-500'>Loading...</h1>
 	}
-	if(error) {}
-	return <div className='flex flex-col gap-4'>
-		{invoices.map((el) => {
-			<InvoiceCard clientName={el.clientName} paymentDue={el.paymentDue} elId={el.elId} total={el.total} status={el.status} key={el.id}/>
-		})}
-	</div>
+	if (error) {
+		;<h1>Xatolik yuz berdi</h1>
+	}
+	return (
+		<div className='flex flex-col gap-4 container mx-auto px-5'>
+			{invoices.map(inv => (
+				<InvoiceCard
+					key={inv.id}
+					clientName={inv.clientName}
+					paymentDue={inv.paymentDue}
+					elId={inv.id}
+					total={inv.total}
+					status={inv.status}
+				/>
+			))}
+		</div>
+	)
 }
