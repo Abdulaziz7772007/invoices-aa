@@ -1,18 +1,26 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Checkbox } from './ui/checkbox'
+import AddElementSheet from './AddElementSheet'
 
-export default function Header({ total, filterElement, setFilterElemant }) {
+export default function Header({ total, filterElement, setFilterElement }) {
 	const [open, setOpen] = useState(false)
+	const list = useRef()
+	const button = useRef()
 
 	function handleClick() {
 		setOpen(!open)
 	}
 
 	function handleChecker(element) {
-		const updated = filterElement.map(el =>
-			el.text === element ? { ...el, chacked: !el.chacked } : el
-		)
-		setFilterElemant(updated)
+		const updated = filterElement.map(el => {
+			if(el.text===element){
+				return {...el,checked:!el.checked}
+			} else {
+				return el
+			}
+		})
+		setFilterElement(updated)
+		
 	}
 
 	return (
@@ -20,18 +28,15 @@ export default function Header({ total, filterElement, setFilterElemant }) {
 			<div className='mx-auto container px-5 flex justify-between items-start'>
 				<div>
 					<h1 className='font-bold text-4xl mb-3'>Invoices</h1>
-					{total ? (
-						<p className='text-slate-500'>
-							There are {total} total invoices
-						</p>
-					) : (
-						<p className='text-slate-400'>No invoices yet</p>
+					{total && (
+						<p className='text-slate-500'>There are {total} total invoices</p>
 					)}
 				</div>
 
 				<div className='relative'>
 					<button
-						className='inline-flex items-center gap-1 hover:bg-slate-100 py-2 px-4 rounded-md border border-slate-200'
+					ref={button}
+						className='inline-flex items-center gap-1 hover:bg-slate-100 py-2 px-4 rounded-md border border-slate-200 mr-3'
 						onClick={handleClick}
 					>
 						Filter by status
@@ -69,19 +74,20 @@ export default function Header({ total, filterElement, setFilterElemant }) {
 					</button>
 
 					{open && (
-						<div className='flex flex-col gap-1 absolute p-2 rounded-md shadow-lg min-w-[180px] bg-white top-12 right-0 border border-slate-200'>
+						<div ref={list} className='flex flex-col gap-1 absolute p-2 rounded-md shadow-lg min-w-[180px] bg-white top-12 right-0 border border-slate-200 z-10'>
 							{filterElement.map(el => (
 								<span
-									key={el.text} 
+								key={el.text}
 									onClick={() => handleChecker(el.text)}
-									className='inline-flex gap-2 items-center w-full hover:bg-slate-100 rounded-md p-1 select-none cursor-pointer'
+									className='inline-flex gap-2 items-center w-full hover:bg-slate-100 rounded-md p-1 select-none'
 								>
-									<Checkbox checked={el.chacked} />
+									<Checkbox checked={el.checked} />
 									<span className='capitalize'>{el.text}</span>
 								</span>
 							))}
 						</div>
 					)}
+					<AddElementSheet/>
 				</div>
 			</div>
 		</header>

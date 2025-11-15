@@ -7,34 +7,38 @@ export default function Home() {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(null)
 	const [filter, setFilter] = useState('')
-	const [filterElement, setFilterElemant] = useState([
+	const [filterElement, setFilterElement] = useState([
 		{
-			chacked: false,
+			checked: false,
 			text: 'draft',
 		},
 		{
-			chacked: false,
+			checked: false,
 			text: 'pending',
 		},
 		{
-			chacked: false,
+			checked: false,
 			text: 'paid',
 		},
 	])
 
 	useEffect(() => {
-		filterElement.map((el) => {
-			if(el.chacked) {
-				return `|${el.text}`
-			} else {
-				return ''
-			}
-		})
+		const result = filterElement
+			.map(el => {
+				if (el.checked) {
+					return `|${el.text}`
+				} else {
+					return ''
+				}
+			})
+			.join('')
+			.slice(1)
+		setFilter(result)
 	}, [JSON.stringify(filterElement)])
 
 	useEffect(() => {
 		setLoading(true)
-		fetch('https://json-api.uz/api/project/invoice-app-fn43/invoices')
+		fetch(`https://json-api.uz/api/project/invoice-app-fn43/invoices${ filter !== '' ? `?status=${filter}` : filter}`)
 			.then(res => {
 				return res.json()
 			})
@@ -47,10 +51,14 @@ export default function Home() {
 			.finally(() => {
 				setLoading(false)
 			})
-	}, [])
+	}, [filter])
 	return (
 		<div>
-			<Header total={invoices.length > 0 ? invoices.length : null} filterElement={filterElement} setFilterElemant={setFilterElemant} />
+			<Header
+				total={invoices.length > 0 ? invoices.length : null}
+				filterElement={filterElement}
+				setFilterElement={setFilterElement}
+			/>
 			<Invoices invoices={invoices} loading={loading} error={error} />
 		</div>
 	)
