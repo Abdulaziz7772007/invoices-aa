@@ -38,7 +38,11 @@ export default function Home() {
 
 	useEffect(() => {
 		setLoading(true)
-		fetch(`https://json-api.uz/api/project/invoice-app-fn43/invoices${ filter !== '' ? `?status=${filter}` : filter}`)
+		fetch(
+			`https://json-api.uz/api/project/invoice-app-fn43/invoices${
+				filter !== '' ? `?status=${filter}` : filter
+			}`
+		)
 			.then(res => {
 				return res.json()
 			})
@@ -58,8 +62,13 @@ export default function Home() {
 				total={invoices.length > 0 ? invoices.length : null}
 				filterElement={filterElement}
 				setFilterElement={setFilterElement}
+				setInvoices={setInvoices}
 			/>
-			<Invoices invoices={invoices} loading={loading} error={error} />
+			<Invoices
+				invoices={invoices}
+				loading={loading}
+				error={error}
+			/>
 		</div>
 	)
 }

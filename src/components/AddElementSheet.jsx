@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/sheet'
 import { ChevronDownIcon, PlusCircleIcon, Trash } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { formValidation, objFormatter } from '../functions'
 import { buttonVariants } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
@@ -27,11 +29,37 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from './ui/select'
+import { SheetClose } from './ui/sheet'
 
-export default function AddElementSheet() {
+export default function AddElementSheet({setInvoices}) {
 	const [items, setItems] = useState([])
 	const [open, setOpen] = useState(false)
 	const [date, setDate] = useState(undefined)
+	const [loading, setLoading] = useState(false)
+
+	function sendData(data) {
+		setLoading(true)
+		fetch('https://json-api.uz/api/project/invoice-app-fn43/invoices', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		})
+			.then(res => res.json)
+			.then(res => {
+				toast.success("Backendga ma'lumot muvaffaqqiyatli qo'shildi")
+				setInvoices((prev) => {
+					return [res, ...prev]
+				})
+			})
+			.catch(() => {
+				toast.error("Backendga ma'lumot jo'natishda xatolik yuz berdi")
+			})
+			.finally(() => {
+				setLoading(false)
+			})
+	}
 
 	function handleItems(id, key, value) {
 		const updatedElement = items.find(el => el.id === id)
@@ -45,6 +73,32 @@ export default function AddElementSheet() {
 			}
 		})
 		setItems(result)
+	}
+
+	function handleSubmit(evt) {
+		evt.preventDefault()
+		const result = {}
+		const formData = new FormData(evt.target)
+		formData.forEach((value, key) => {
+			result[key] = value
+		})
+		result.status = event.submitter.id
+		result.elId = window.crypto.randomUUID()
+		result.items = items
+		result.paymentDue = date
+		result.total = items.reduce((acc, el) => {
+			return (acc += el.total)
+		}, 0)
+
+		const check = formValidation(result)
+		if (check && result.status === 'pending') {
+			const { message, target } = check
+			evt.target[target]?.focus()
+			toast.error(message)
+		} else {
+			const readyData = objFormatter(result)
+			sendData(readyData)
+		}
 	}
 	function deleteItems(id) {
 		const result = items.filter(el => el.id !== id)
@@ -63,43 +117,43 @@ export default function AddElementSheet() {
 					<SheetTitle>New Invoice</SheetTitle>
 					<SheetDescription>Add a new element</SheetDescription>
 				</SheetHeader>
-				<div className='px-5 py-10  h-full	 overflow-y-scroll'>
-					<form className=''>
+				<div className='px-5 pt-10 pb-24  h-full	 overflow-y-scroll'>
+					<form onSubmit={handleSubmit}>
 						<fieldset>
 							<legend className='font-bold text-[#7C5DFA] mb-5'>
 								Bill From
 							</legend>
 							<div className='grid w-full  items-center gap-3 mb-5'>
-								<Label htmlFor='senderAdres.street'>Sender adres</Label>
+								<Label htmlFor='senderAddress.street'>Sender adres</Label>
 								<Input
 									type='text'
-									id='senderAdres.street'
-									name='senderAdres.street'
+									id='senderAddress.street'
+									name='senderAddress.street'
 								/>
 							</div>
 							<div className='flex gap-6'>
 								<div className='grid w-full  items-center gap-3'>
-									<Label htmlFor='senderAdres.city'>City</Label>
+									<Label htmlFor='senderAddress.city'>City</Label>
 									<Input
 										type='text'
-										id='senderAdres.city'
-										name='senderAdres.city'
+										id='senderAddress.city'
+										name='senderAddress.city'
 									/>
 								</div>
 								<div className='grid w-full  items-center gap-3'>
-									<Label htmlFor='senderAdres.postCode'>Post Code</Label>
+									<Label htmlFor='senderAddress.postCode'>Post Code</Label>
 									<Input
 										type='text'
-										id='senderAdres.postCode'
-										name='senderAdres.postCode'
+										id='senderAddress.postCode'
+										name='senderAddress.postCode'
 									/>
 								</div>
 								<div className='grid w-full  items-center gap-3'>
-									<Label htmlFor='senderAdres.country'>Country</Label>
+									<Label htmlFor='senderAddress.country'>Country</Label>
 									<Input
 										type='text'
-										id='senderAdres.country'
-										name='senderAdres.country'
+										id='senderAddress.country'
+										name='senderAddress.country'
 									/>
 								</div>
 							</div>
@@ -116,40 +170,40 @@ export default function AddElementSheet() {
 									type='email'
 									id='clientEmail'
 									name='clientEmail'
-									placeHolder='e.g. email@example.com'
+									placeholder='e.g. email@example.com'
 								/>
 							</div>
 							<div className='grid w-full  items-center gap-3 mb-5'>
-								<Label htmlFor='clientAdres.street'>Client adres</Label>
+								<Label htmlFor='clientAddress.street'>Client adres</Label>
 								<Input
 									type='text'
-									id='clientAdres.street'
-									name='clientAdres.street'
+									id='clientAddress.street'
+									name='clientAddress.street'
 								/>
 							</div>
 							<div className='flex gap-6 mb-5'>
 								<div className='grid w-full  items-center gap-3'>
-									<Label htmlFor='clientAdres.city'>City</Label>
+									<Label htmlFor='clientAddress.city'>City</Label>
 									<Input
 										type='text'
-										id='clientAdres.city'
-										name='clientAdres.city'
+										id='clientAddress.city'
+										name='clientAddress.city'
 									/>
 								</div>
 								<div className='grid w-full  items-center gap-3'>
-									<Label htmlFor='clientAdres.postCode'>Post Code</Label>
+									<Label htmlFor='clientAddress.postCode'>Post Code</Label>
 									<Input
 										type='text'
-										id='clientAdres.postCode'
-										name='clientAdres.postCode'
+										id='clientAddress.postCode'
+										name='clientAddress.postCode'
 									/>
 								</div>
 								<div className='grid w-full  items-center gap-3 '>
-									<Label htmlFor='clientAdres.country'>Country</Label>
+									<Label htmlFor='clientAddress.country'>Country</Label>
 									<Input
 										type='text'
-										id='clientAdres.country'
-										name='clientAdres.country'
+										id='clientAddress.country'
+										name='clientAddress.country'
 									/>
 								</div>
 							</div>
@@ -211,6 +265,22 @@ export default function AddElementSheet() {
 								<Input type='text' id='description' name='description' />
 							</div>
 						</fieldset>
+						<div className='flex justify-between absolute bottom-0 p-3  bg-white border w-full'>
+							<SheetClose
+								className={buttonVariants({ variant: 'outline' })}
+								type='reset'
+							>
+								Discard
+							</SheetClose>
+							<div className='flex gap-5 mr-10'>
+								<Button disabled={loading} id='draft' variant='secondary' type='submit'>
+									Save as Draft
+								</Button>
+								<Button disabled={loading} id='pending' type='submit'>
+									Sava & Pending
+								</Button>
+							</div>
+						</div>
 					</form>
 					{/* Items */}
 					<div className='flex flex-col gap-3 mb-3'>

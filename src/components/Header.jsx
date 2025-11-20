@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Checkbox } from './ui/checkbox'
 import AddElementSheet from './AddElementSheet'
 
-export default function Header({ total, filterElement, setFilterElement }) {
+export default function Header({ total, filterElement, setFilterElement, setInvoices }) {
 	const [open, setOpen] = useState(false)
 	const list = useRef()
 	const button = useRef()
@@ -87,7 +87,7 @@ export default function Header({ total, filterElement, setFilterElement }) {
 							))}
 						</div>
 					)}
-					<AddElementSheet/>
+					<AddElementSheet setInvoices={setInvoices}/>
 				</div>
 			</div>
 		</header>

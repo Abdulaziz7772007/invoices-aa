@@ -14,7 +14,8 @@ export default function Invoices({ invoices, loading, error }) {
 					key={inv.id}
 					clientName={inv.clientName}
 					paymentDue={inv.paymentDue}
-					elId={inv.id}
+					id={inv.id}
+					elId={inv.elId}
 					total={inv.total}
 					status={inv.status}
 				/>
