@@ -24,37 +24,27 @@ export default function Home() {
 
 	useEffect(() => {
 		const result = filterElement
-			.map(el => {
-				if (el.checked) {
-					return `|${el.text}`
-				} else {
-					return ''
-				}
-			})
-			.join('')
-			.slice(1)
+			.filter(el => el.checked)
+			.map(el => `status=${el.text}`)
+			.join('&')
+
 		setFilter(result)
-	}, [JSON.stringify(filterElement)])
+	}, [filterElement])
 
 	useEffect(() => {
 		setLoading(true)
+
 		fetch(
 			`https://json-api.uz/api/project/invoice-app-fn43/invoices/${
-				filter !== '' ? `?status=${filter}` : filter
+				filter ? `?${filter}` : ''
 			}`
 		)
+			.then(res => res.json())
 			.then(res => {
-				return res.json()
+				setInvoices(res.data ?? res)
 			})
-			.then(res => {
-				setInvoices(res.data)
-			})
-			.catch(() => {
-				setError('something went wrong :(')
-			})
-			.finally(() => {
-				setLoading(false)
-			})
+			.catch(() => setError('something went wrong :('))
+			.finally(() => setLoading(false))
 	}, [filter])
 	return (
 		<div>
@@ -64,11 +54,7 @@ export default function Home() {
 				setFilterElement={setFilterElement}
 				setInvoices={setInvoices}
 			/>
-			<Invoices
-				invoices={invoices}
-				loading={loading}
-				error={error}
-			/>
+			<Invoices invoices={invoices} loading={loading} error={error} />
 		</div>
 	)
 }
