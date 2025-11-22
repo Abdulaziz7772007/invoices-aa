@@ -13,7 +13,6 @@ export default function Home() {
 		{ checked: false, text: 'paid' },
 	])
 
-	// FILTER GENERATOR
 	useEffect(() => {
 		const result = filterElement
 			.filter(el => el.checked)
@@ -23,23 +22,26 @@ export default function Home() {
 		setFilter(result)
 	}, [filterElement])
 
-	// FETCH DATA
 	useEffect(() => {
-		setLoading(true)
+    setLoading(true)
 
-		const baseUrl =
-			'https://json-api.uz/api/project/invoice-app-fn43/collection/invoices'
+    const baseUrl =
+        'https://json-api.uz/api/project/invoice-app-fn43/collection/invoices'
 
-		const url = filter ? `${baseUrl}?${filter}` : baseUrl
+    const url = filter ? `${baseUrl}?${filter}` : baseUrl
 
-		fetch(url)
-			.then(res => res.json())
-			.then(res => {
-				setInvoices(res.data ?? res)
-			})
-			.catch(() => setError('something went wrong :('))
-			.finally(() => setLoading(false))
-	}, [filter])
+    fetch(url, { method: 'POST' })
+        .then((res) => res.json())
+        .then((res) => {
+            setInvoices(res.data ?? res)
+        })
+        .catch(() => {
+            setError('something went wrong :(')
+        })
+        .finally(() => {
+            setLoading(false)
+        })
+}, [filter])
 
 	return (
 		<div>
