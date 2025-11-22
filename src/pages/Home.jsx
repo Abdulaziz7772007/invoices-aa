@@ -39,7 +39,7 @@ export default function Home() {
 	useEffect(() => {
 		setLoading(true)
 		fetch(
-			`https://json-api.uz/api/project/invoice-app-fn43/invoices${
+			`https://json-api.uz/api/project/invoice-app-fn43/invoices/${
 				filter !== '' ? `?status=${filter}` : filter
 			}`
 		)
