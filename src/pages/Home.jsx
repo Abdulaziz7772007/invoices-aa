@@ -8,41 +8,54 @@ export default function Home() {
 	const [error, setError] = useState(null)
 	const [filter, setFilter] = useState('')
 	const [filterElement, setFilterElement] = useState([
-		{ checked: false, text: 'draft' },
-		{ checked: false, text: 'pending' },
-		{ checked: false, text: 'paid' },
+		{
+			checked: false,
+			text: 'draft',
+		},
+		{
+			checked: false,
+			text: 'pending',
+		},
+		{
+			checked: false,
+			text: 'paid',
+		},
 	])
 
 	useEffect(() => {
 		const result = filterElement
-			.filter(el => el.checked)
-			.map(el => `status=${el.text}`)
-			.join('&')
-
+			.map(el => {
+				if (el.checked) {
+					return `|${el.text}`
+				} else {
+					return ''
+				}
+			})
+			.join('')
+			.slice(1)
 		setFilter(result)
-	}, [filterElement])
+	}, [JSON.stringify(filterElement)])
 
 	useEffect(() => {
-    setLoading(true)
-
-    const baseUrl =
-        'https://json-api.uz/api/project/invoice-app-fn43/collection/invoices'
-
-    const url = filter ? `${baseUrl}?${filter}` : baseUrl
-
-    fetch(url, { method: 'POST' })
-        .then((res) => res.json())
-        .then((res) => {
-            setInvoices(res.data ?? res)
-        })
-        .catch(() => {
-            setError('something went wrong :(')
-        })
-        .finally(() => {
-            setLoading(false)
-        })
-}, [filter])
-
+		setLoading(true)
+		fetch(
+			`https://json-api.uz/api/project/invoice-app-fn43/invoices${
+				filter !== '' ? `?status=${filter}` : filter
+			}`
+		)
+			.then(res => {
+				return res.json()
+			})
+			.then(res => {
+				setInvoices(res.data)
+			})
+			.catch(() => {
+				setError('something went wrong :(')
+			})
+			.finally(() => {
+				setLoading(false)
+			})
+	}, [filter])
 	return (
 		<div>
 			<Header
@@ -51,7 +64,11 @@ export default function Home() {
 				setFilterElement={setFilterElement}
 				setInvoices={setInvoices}
 			/>
-			<Invoices invoices={invoices} loading={loading} error={error} />
+			<Invoices
+				invoices={invoices}
+				loading={loading}
+				error={error}
+			/>
 		</div>
 	)
 }
