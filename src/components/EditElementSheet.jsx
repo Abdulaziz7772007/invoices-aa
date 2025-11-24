@@ -37,13 +37,16 @@ export default function EditElementSheet({ invoice, setInvoice }) {
 	const [date, setDate] = useState(new Date(invoice.paymentDue))
 
 	function sendData(data) {
-		fetch(`https://json-api.uz/api/project/invoice-app-fn43/invoices/${invoice.id}`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		})
+		fetch(
+			`https://json-api.uz/api/project/invoice-app-fn43/invoices/${invoice.id}`,
+			{
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
+			}
+		)
 			.then(res => res.json)
 			.then(res => {
 				toast.success("Backenddagi ma'limot muvaffaqqiyatli yangilandi")
@@ -225,7 +228,7 @@ export default function EditElementSheet({ invoice, setInvoice }) {
 											<Button
 												variant='outline'
 												id='date'
-												className='w-96 justify-between font-normal'
+												className='w-30 sm:w-48 md:w-96 justify-between font-normal'
 											>
 												{date ? date.toLocaleDateString() : 'Select date'}
 												<ChevronDownIcon />
@@ -288,60 +291,71 @@ export default function EditElementSheet({ invoice, setInvoice }) {
 								Discard
 							</SheetClose>
 							<div className='flex gap-5 mr-10'>
-								
-								<Button  type='submit'>
-									Save 
-								</Button>
+								<Button type='submit'>Save</Button>
 							</div>
 						</div>
 					</form>
 					{/* Items */}
 					<div className='flex flex-col gap-3 mb-3'>
-						{items?.length> 0 &&
+						{items?.length > 0 &&
 							items.map(el => {
 								return (
-									<div className='flex items-center gap-5'>
-										<Input
-											type='text'
-											variant={el.name}
-											defaultValue={el.name}
-											name='name'
-											onChange={evt => {
-												handleItems(el.id, 'name', evt.target.value)
-											}}
-										/>
-										<Input
-											type='number'
-											variant={el.quantity}
-											defaultValue={el.quantity}
-											name='quantity'
-											onChange={evt => {
-												handleItems(el.id, 'quantity', evt.target.value)
-											}}
-										/>
-										<Input
-											type='number'
-											variant={el.price}
-											defaultValue={el.price}
-											name='price'
-											onChange={evt => {
-												handleItems(el.id, 'price', evt.target.value)
-											}}
-										/>
-										<span>{el.total}</span>
-										<Button
-											onClick={() => {
-												deleteItems(el.id)
-											}}
-											variant='destructive'
-										>
-											<Trash />
-										</Button>
+									<div className='flex  flex-col sm:flex-row items-center gap-5'>
+										<div className='w-full mb-5'>
+											<span className='text-[#7E88C3]'>Item Name</span>
+											<Input
+												type='text'
+												variant={el.name}
+												defaultValue={el.name}
+												name='name'
+												onChange={evt => {
+													handleItems(el.id, 'name', evt.target.value)
+												}}
+											/>
+										</div>
+										<div className='flex gap-3 w-full items-center mb-5'>
+											<div>
+												<span className='text-[#7E88C3]'>Qty.</span>
+												<Input
+												type='number'
+												variant={el.quantity}
+												defaultValue={el.quantity}
+												name='quantity'
+												onChange={evt => {
+													handleItems(el.id, 'quantity', evt.target.value)
+												}}
+											/>
+											</div>
+											<div>
+												<span className='text-[#7E88C3]'>Price</span>
+												<Input
+												type='number'
+												variant={el.price}
+												defaultValue={el.price}
+												name='price'
+												onChange={evt => {
+													handleItems(el.id, 'price', evt.target.value)
+												}}
+											/>
+											</div>
+											<div className='flex flex-col'>
+												<span className='text-[#7E88C3]'>Total</span>
+												<span>{el.total}</span>
+											</div>
+											<Button
+												onClick={() => {
+													deleteItems(el.id)
+												}}
+												variant='destructive'
+											>
+												<Trash />
+											</Button>
+										</div>
 									</div>
 								)
 							})}
 						<Button
-							className='w-full p-6 rounded-full'
+							className='w-full  p-6 rounded-full'
 							variant='outline'
 							type='button'
 							onClick={() => {

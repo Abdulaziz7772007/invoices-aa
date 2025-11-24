@@ -1,3 +1,4 @@
+import Empty from './Empty'
 import InvoiceCard from './InvoiceCard'
 
 export default function Invoices({ invoices, loading, error }) {
@@ -9,7 +10,7 @@ export default function Invoices({ invoices, loading, error }) {
 	}
 	return (
 		<div className='flex flex-col gap-4 container mx-auto px-5'>
-			{invoices.map(inv => (
+			{invoices.length > 0 ? invoices.map(inv => (
 				<InvoiceCard
 					key={inv.id}
 					clientName={inv.clientName}
@@ -19,7 +20,8 @@ export default function Invoices({ invoices, loading, error }) {
 					total={inv.total}
 					status={inv.status}
 				/>
-			))}
+
+			)) : <Empty/>}
 		</div>
 	)
 }

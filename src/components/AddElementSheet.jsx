@@ -31,7 +31,7 @@ import {
 } from './ui/select'
 import { SheetClose } from './ui/sheet'
 
-export default function AddElementSheet({setInvoices}) {
+export default function AddElementSheet({ setInvoices }) {
 	const [items, setItems] = useState([])
 	const [open, setOpen] = useState(false)
 	const [date, setDate] = useState(undefined)
@@ -49,7 +49,7 @@ export default function AddElementSheet({setInvoices}) {
 			.then(res => res.json)
 			.then(res => {
 				toast.success("Backendga ma'lumot muvaffaqqiyatli qo'shildi")
-				setInvoices((prev) => {
+				setInvoices(prev => {
 					return [res, ...prev]
 				})
 			})
@@ -108,9 +108,9 @@ export default function AddElementSheet({setInvoices}) {
 	return (
 		<Sheet>
 			<SheetTrigger
-				className={`${buttonVariants({ variant: 'default' })} rounded-full!`}
+				className={`${buttonVariants({ variant: 'default' })} rounded-full! mb-2`}
 			>
-				<PlusCircleIcon /> New Invoice
+				<PlusCircleIcon /> New 
 			</SheetTrigger>
 			<SheetContent className='h-[85vh] ' side='bottom'>
 				<SheetHeader>
@@ -219,7 +219,7 @@ export default function AddElementSheet({setInvoices}) {
 											<Button
 												variant='outline'
 												id='date'
-												className='w-96 justify-between font-normal'
+												className='w-30 sm:w-48 md:w-96 justify-between font-normal'
 											>
 												{date ? date.toLocaleDateString() : 'Select date'}
 												<ChevronDownIcon />
@@ -265,15 +265,20 @@ export default function AddElementSheet({setInvoices}) {
 								<Input type='text' id='description' name='description' />
 							</div>
 						</fieldset>
-						<div className='flex justify-between absolute bottom-0 p-3  bg-white border w-full'>
+						<div className='flex flex-col sm:flex-row gap-3 justify-between absolute bottom-0 p-3  bg-white border w-full'>
 							<SheetClose
 								className={buttonVariants({ variant: 'outline' })}
 								type='reset'
 							>
 								Discard
 							</SheetClose>
-							<div className='flex gap-5 mr-10'>
-								<Button disabled={loading} id='draft' variant='secondary' type='submit'>
+							<div className='flex gap-1 mr-10'>
+								<Button
+									disabled={loading}
+									id='draft'
+									variant='secondary'
+									type='submit'
+								>
 									Save as Draft
 								</Button>
 								<Button disabled={loading} id='pending' type='submit'>
@@ -287,40 +292,58 @@ export default function AddElementSheet({setInvoices}) {
 						{items.length > 0 &&
 							items.map(el => {
 								return (
-									<div className='flex items-center gap-5'>
-										<Input
-											type='text'
-											variant={el.name}
-											name='name'
-											onChange={evt => {
-												handleItems(el.id, 'name', evt.target.value)
-											}}
-										/>
-										<Input
-											type='number'
-											variant={el.quantity}
-											name='quantity'
-											onChange={evt => {
-												handleItems(el.id, 'quantity', evt.target.value)
-											}}
-										/>
-										<Input
-											type='number'
-											variant={el.price}
-											name='price'
-											onChange={evt => {
-												handleItems(el.id, 'price', evt.target.value)
-											}}
-										/>
-										<span>{el.total}</span>
-										<Button
-											onClick={() => {
-												deleteItems(el.id)
-											}}
-											variant='destructive'
-										>
-											<Trash />
-										</Button>
+									<div
+										key={el.id}
+										className='flex flex-col sm:flex-row items-center gap-5'
+									>
+										<div className='w-full flex flex-col gap-3'>
+											<span className='text-[#7E88C3]'>Item Name</span>
+											<Input
+												type='text'
+												variant={el.name}
+												name='name'
+												onChange={evt => {
+													handleItems(el.id, 'name', evt.target.value)
+												}}
+											/>
+										</div>
+										<div className='flex gap-3 w-full items-center mb-5'>
+											<div>
+												<span className='text-[#7E88C3]'>Qty.</span>
+												<Input
+													type='number'
+													variant={el.quantity}
+													name='quantity'
+													onChange={evt => {
+														handleItems(el.id, 'quantity', evt.target.value)
+													}}
+												/>
+											</div>
+											<div>
+												<span className='text-[#7E88C3]'>Price</span>
+												<Input
+													type='number'
+													variant={el.price}
+													name='price'
+													onChange={evt => {
+														handleItems(el.id, 'price', evt.target.value)
+													}}
+												/>
+											</div>
+
+											<div className='flex flex-col '>
+												<span className='text-[#7E88C3]'>Total</span>
+												<span>{el.total}</span>
+											</div>
+											<Button
+												onClick={() => {
+													deleteItems(el.id)
+												}}
+												variant='destructive'
+											>
+												<Trash />
+											</Button>
+										</div>
 									</div>
 								)
 							})}

@@ -1,8 +1,13 @@
 import { useRef, useState } from 'react'
-import { Checkbox } from './ui/checkbox'
 import AddElementSheet from './AddElementSheet'
+import { Checkbox } from './ui/checkbox'
 
-export default function Header({ total, filterElement, setFilterElement, setInvoices }) {
+export default function Header({
+	total,
+	filterElement,
+	setFilterElement,
+	setInvoices,
+}) {
 	const [open, setOpen] = useState(false)
 	const list = useRef()
 	const button = useRef()
@@ -13,14 +18,13 @@ export default function Header({ total, filterElement, setFilterElement, setInvo
 
 	function handleChecker(element) {
 		const updated = filterElement.map(el => {
-			if(el.text===element){
-				return {...el,checked:!el.checked}
+			if (el.text === element) {
+				return { ...el, checked: !el.checked }
 			} else {
 				return el
 			}
 		})
 		setFilterElement(updated)
-		
 	}
 
 	return (
@@ -35,11 +39,11 @@ export default function Header({ total, filterElement, setFilterElement, setInvo
 
 				<div className='relative'>
 					<button
-					ref={button}
-						className='inline-flex items-center gap-1 hover:bg-slate-100 py-2 px-4 rounded-md border border-slate-200 mr-3'
+						ref={button}
+						className='inline-flex items-center gap-1 hover:bg-slate-100 mb-2 py-2 px-4 rounded-md border border-slate-200 mr-3'
 						onClick={handleClick}
 					>
-						Filter by status
+						Filter
 						{open ? (
 							<svg
 								width='15'
@@ -74,10 +78,13 @@ export default function Header({ total, filterElement, setFilterElement, setInvo
 					</button>
 
 					{open && (
-						<div ref={list} className='flex flex-col gap-1 absolute p-2 rounded-md shadow-lg min-w-[180px] bg-white top-12 right-0 border border-slate-200 z-10'>
+						<div
+							ref={list}
+							className='flex flex-col gap-1 absolute p-2 rounded-md shadow-lg min-w-[180px] bg-white top-12  border border-slate-200 z-10'
+						>
 							{filterElement.map(el => (
 								<span
-								key={el.text}
+									key={el.text}
 									onClick={() => handleChecker(el.text)}
 									className='inline-flex gap-2 items-center w-full hover:bg-slate-100 rounded-md p-1 select-none'
 								>
@@ -87,7 +94,8 @@ export default function Header({ total, filterElement, setFilterElement, setInvo
 							))}
 						</div>
 					)}
-					<AddElementSheet setInvoices={setInvoices}/>
+
+					<AddElementSheet setInvoices={setInvoices} />
 				</div>
 			</div>
 		</header>
